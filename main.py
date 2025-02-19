@@ -34,6 +34,8 @@ def main():
             return main()
 
     app = App()
+
+    # Creates and visualizes the menu. The for loop iterates through the available options for the app and prints them.
     print('Изберете опция от менюто:\n')
     for key, value in app.available_choices.items():
         print(f"[{key}] {value.description}")

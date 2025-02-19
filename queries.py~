@@ -196,7 +196,6 @@ def view_main_data_table_for_given_month(year: int, month: str):
 
     return result.fetchall()
 
-
 print(view_main_data_table_for_given_month(2025, '01'))
 
 
