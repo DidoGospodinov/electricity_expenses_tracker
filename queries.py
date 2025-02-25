@@ -219,12 +219,14 @@ def view_main_data_table_for_given_year(year):
     cursor = conn.cursor()
 
     result = cursor.execute('''
-        SELECT id, kwh_report_date, day_kwh, night_kwh
+        SELECT kwh_report_date, month, day_kwh, night_kwh, day_price, night_price
         FROM main_data
         WHERE current_year = ?
     ''', (year,))
 
     return result.fetchall()
+
+
 
 def get_previous_month_data(year, month):
     if month == 1:
@@ -241,13 +243,13 @@ def get_previous_month_data(year, month):
         FROM main_data
         WHERE current_year = ? AND month = ?
     ''', (year, month_name))
-    print(result.fetchall())
+    
+    result.fetchall()
+
     if not result.fetchall():
         result = get_initial_data()
 
     return result
-
-
 
 
 def view_main_data_table_for_given_month(year: int, month: int):
@@ -263,8 +265,10 @@ def view_main_data_table_for_given_month(year: int, month: int):
             month,
             day_kwh,
             night_kwh,
-            day_kwh - {previous_month_day_kwh} * day_price,
-            night_kwh - {previous_month_night_kwh} * night_price
+            day_kwh - {previous_month_day_kwh},
+            night_kwh - {previous_month_night_kwh},
+            day_price,
+            night_price
         FROM main_data
         WHERE current_year = ? AND month = ?
     ''', (year, month_name))

@@ -1,19 +1,20 @@
 from typing import Dict
 import queries as q
+from math import ceil
 
 months = {
-    1: {'01': 'Януари'},
-    2: {'02': 'Февруари'},
-    3: {'03': 'Март'},
-    4: {'04': 'Април'},
-    5: {'05': 'Май'},
-    6: {'06': 'Юни'},
-    7: {'07': 'Юли'},
-    8: {'08': 'Август'},
-    9: {'09': 'Септември'},
-    10: {'10': 'Октомври'},
-    11: {'11': 'Ноември'},
-    12: {'12': 'Декември'}
+    'January': 'Януари',
+    'February': 'Февруари',
+    'March': 'Март',
+    'April': 'Април',
+    'May': 'Май',
+    'June': 'Юни',
+    'July': 'Юли',
+    'August': 'Август',
+    'September': 'Септември',
+    'October': 'Октомври',
+    'November': 'Ноември',
+    'December': 'Декември'
 }
 
 
@@ -56,7 +57,29 @@ class App:
 
     @describe('Проверка на сметка за избран месец')
     def check_month_bill(self):
-        pass
+        year = int(input('Въведете година: '))
+        month = int(input('Въведете месец: '))
+
+        query = q.view_main_data_table_for_given_month(year, month) # Returns a list of tuples
+
+        if not query:
+            return '\n' + ("#" * 42) + '\nНяма данни за избрания месец!\n' + ("#" * 42) + '\n'
+
+        result = '| {:^20} | {:^10} | {:^15} | {:^15} | {:^15} | {:^15} | {:^15} | {:^15} |\n'.format('Дата на отчитане', 'Месец', 'Дневни кВтч', 'Нощни кВтч', 'Дневна цена', 'Нощна цена', 'Общо кВтч', 'Обща цена')
+        result += '-' * 145 + '\n'
+        # result = f'\n{"Дата на отчитане":^20}{"Месец":^10}{"Дневни кВтч":^15}{"Нощни кВтч":^15}{"Дневна цена":^15}{"Нощна цена":^15}\n'
+        report_date = query[0][0]
+        month = months[query[0][1]]
+        day_kwh = query[0][2]
+        night_kwh = query[0][3]
+        day_price = str(round(query[0][4] * query[0][6], 2)) + ' лв.'
+        night_price = str(round(query[0][5] * query[0][7], 2)) + ' лв.'
+        total_kwh = day_kwh + night_kwh
+        total_price = str(round((query[0][4] * query[0][6]) + (query[0][5] * query[0][7]), 2)) + ' лв.'
+        # result += f'{report_date:<20}{month:<10}{day_kwh:<15}{night_kwh:<15}{day_price:<15}{night_price:<15}\n'
+        result += '| {:^20} | {:^10} | {:^15} | {:^15} | {:^15} | {:^15} | {:^15} | {:^15} |\n'.format(report_date, month, day_kwh, night_kwh, day_price, night_price, total_kwh, total_price)
+
+        return result
 
     @describe('Проверка на сметки за избран период')
     def check_period_bill(self):
@@ -65,3 +88,6 @@ class App:
     @describe('Статистика за потребление на електроенергия')
     def statistics(self):
         pass
+
+app = App()
+print(app.check_month_bill())
