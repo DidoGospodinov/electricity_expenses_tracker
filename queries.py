@@ -54,6 +54,7 @@ def get_year():
 
     return cursor.fetchone()[0]
 
+
 ######################################################################################
 ######################################################################################
 # Table Initial Data                                                                 #
@@ -86,6 +87,7 @@ def create_initial_data(day_kwh, night_kwh):
 
     conn.commit()
 
+
 def get_initial_data():
     conn = sqlite3.connect('database.sqlite')
     cursor = conn.cursor()
@@ -97,6 +99,7 @@ def get_initial_data():
     ''')
 
     return result.fetchall()
+
 
 ######################################################################################
 ######################################################################################
@@ -182,7 +185,6 @@ def create_main_data_table():
     conn.commit()
 
 
-
 def update_main_data_table(report_id: int, kwh_report_date: str, day_kwh: int, night_kwh: int):
     conn = sqlite3.connect('database.sqlite')
     cursor = conn.cursor()
@@ -202,7 +204,6 @@ def insert_in_main_data_table(kwh_report_date, day_kwh, night_kwh):
     correct_month = int(kwh_report_date.split('-')[1]) - 1 if int(kwh_report_date.split('-')[1]) > 1 else 12
     month = calendar.month_name[correct_month]
 
-
     conn = sqlite3.connect('database.sqlite')
     cursor = conn.cursor()
 
@@ -214,21 +215,7 @@ def insert_in_main_data_table(kwh_report_date, day_kwh, night_kwh):
     conn.commit()
 
 
-def view_main_data_table_for_given_year(year):
-    conn = sqlite3.connect('database.sqlite')
-    cursor = conn.cursor()
-
-    result = cursor.execute('''
-        SELECT kwh_report_date, month, day_kwh, night_kwh, day_price, night_price
-        FROM main_data
-        WHERE current_year = ?
-    ''', (year,))
-
-    return result.fetchall()
-
-
-
-def get_previous_month_data(year, month):
+def get_previous_month_data(year, month=1):
     if month == 1:
         year -= 1
         month = 12
@@ -243,7 +230,7 @@ def get_previous_month_data(year, month):
         FROM main_data
         WHERE current_year = ? AND month = ?
     ''', (year, month_name))
-    
+
     result.fetchall()
 
     if not result.fetchall():
@@ -263,8 +250,6 @@ def view_main_data_table_for_given_month(year: int, month: int):
         SELECT
             kwh_report_date,
             month,
-            day_kwh,
-            night_kwh,
             day_kwh - {previous_month_day_kwh},
             night_kwh - {previous_month_night_kwh},
             day_price,
@@ -275,7 +260,24 @@ def view_main_data_table_for_given_month(year: int, month: int):
 
     return result.fetchall()
 
-print(view_main_data_table_for_given_month(2025, 1))
+
+def view_main_data_table_for_given_year(year: int):
+    conn = sqlite3.connect('database.sqlite')
+    cursor = conn.cursor()
+
+    result = cursor.execute(f'''
+        SELECT
+            kwh_report_date,
+            month,
+            day_kwh,
+            night_kwh,
+            day_price,
+            night_price
+        FROM main_data
+        WHERE current_year = ?
+    ''', (year,))
+
+    return result.fetchall()
 
 
 ######################################################################################

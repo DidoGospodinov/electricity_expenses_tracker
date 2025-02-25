@@ -47,7 +47,7 @@ def main():
             if choice == len(app.available_choices) + 1:
                 break
             elif 1 <= choice <= len(app.available_choices):
-                print(app.available_choices[choice]())
+                app.available_choices[choice]()
             else:
                 print(('#' * 42) + '\nЗа да продължите въведете число от 1 до 6!\n' + ('#' * 42) + '\n')
         except ValueError:
