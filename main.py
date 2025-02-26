@@ -1,8 +1,14 @@
 import queries as q
-from app import App
+from app import App, clear_screen
+
+def choose_option():
+    print('\n[1] Назад към главното меню\n[2] Изход\n')
+    return input('Изберете опция: ')
 
 
 def main():
+    clear_screen()
+
     if q.check_if_year_table_exists() is None:
         """
         EN: Checks if the application is started for the first time and if not,
@@ -48,6 +54,7 @@ def main():
                 break
             elif 1 <= choice <= len(app.available_choices):
                 app.available_choices[choice]()
+                main() if choose_option() == '1' else exit()
             else:
                 print(('#' * 42) + '\nЗа да продължите въведете число от 1 до 6!\n' + ('#' * 42) + '\n')
         except ValueError:

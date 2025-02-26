@@ -1,6 +1,6 @@
 from typing import Dict
 import queries as q
-from math import ceil
+import os
 
 months = {
     'January': 'Януари',
@@ -17,6 +17,7 @@ months = {
     'December': 'Декември'
 }
 
+clear_screen = lambda: os.system('cls') # Clears the console when invoked
 
 # TODO add report_table variable for the check_month_bill and the check_period_bill methods
 
@@ -73,7 +74,7 @@ class App:
         if not query:
             return '\n' + ("#" * 42) + '\nНяма данни за избрания месец!\n' + ("#" * 42) + '\n'
 
-        report_table = ('| {:^20} | {:^10} | {:^15} | {:^15} | {:^15} | {:^15} | {:^15} | {:^15} |\n'
+        report_table = ('\n| {:^20} | {:^10} | {:^15} | {:^15} | {:^15} | {:^15} | {:^15} | {:^15} |\n'
                         .format('Дата на отчитане', 'Месец', 'Дневни кВтч', 'Нощни кВтч', 'Дневна цена',
                                 'Нощна цена', 'Общо кВтч', 'Обща цена'))
         report_table += '-' * 145 + '\n'
@@ -82,16 +83,17 @@ class App:
         month = months[query[0][1]]
         day_kwh = query[0][2]
         night_kwh = query[0][3]
-        day_price = str(round(query[0][4] * query[0][6], 2)) + ' лв.'
-        night_price = str(round(query[0][5] * query[0][7], 2)) + ' лв.'
+        day_price = str(round(query[0][2] * query[0][4], 2)) + ' лв.'
+        night_price = str(round(query[0][3] * query[0][5], 2)) + ' лв.'
         total_kwh = day_kwh + night_kwh
-        total_price = str(round((query[0][4] * query[0][6]) + (query[0][5] * query[0][7]), 2)) + ' лв.'
+        total_price = str(round((query[0][2] * query[0][4]) + (query[0][3] * query[0][5]), 2)) + ' лв.'
 
         report_table += ('| {:^20} | {:^10} | {:^15} | {:^15} | {:^15} | {:^15} | {:^15} | {:^15} |\n'
                          .format(report_date, month, day_kwh, night_kwh, day_price,
                                  night_price, total_kwh, total_price))
         report_data = [report_date, month, day_kwh, night_kwh, day_price, night_price, total_kwh, total_price]
 
+        clear_screen()
         print(report_table)
 
         return report_data
@@ -105,7 +107,7 @@ class App:
         if not query:
             return '\n' + ("#" * 42) + '\nНяма данни за избраната година!\n' + ("#" * 42) + '\n'
 
-        report_table = ('| {:^20} | {:^10} | {:^15} | {:^15} | {:^15} | {:^15} | {:^15} | {:^15} |\n'
+        report_table = ('\n| {:^20} | {:^10} | {:^15} | {:^15} | {:^15} | {:^15} | {:^15} | {:^15} |\n'
                         .format('Дата на отчитане', 'Месец', 'Дневни кВтч', 'Нощни кВтч', 'Дневна цена',
                                 'Нощна цена', 'Общо кВтч', 'Обща цена'))
         report_table += '-' * 145 + '\n'
@@ -129,6 +131,7 @@ class App:
             previous_month_day_kwh = data[2]
             previous_month_night_kwh = data[3]
 
+        clear_screen()
         print(report_table)
 
     @describe('Статистика за потребление на електроенергия')
